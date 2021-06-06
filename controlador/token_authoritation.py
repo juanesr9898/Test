@@ -4,6 +4,7 @@ import modelo.database as database
 from modelo.tokens_model import Token
 from sqlalchemy.orm import Session
 from fastapi import Depends
+from fastapi.security import SecurityScopes
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
@@ -24,12 +25,16 @@ def create_access_token(data:dict,db:Session=Depends(get_db)): #Creamos el token
     db.refresh(new_access_token)
     return encoded_jwt
 
-def verify_token(token : str): #Verificamos el token y manejamos raise para errores
+def verify_token(token : str, security_scopes: SecurityScopes, authenticate_value, credentials_exception): #Verificamos el token y manejamos raise para errores
     try: 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]) #Cargamos  el token descodificado con los algoritmos con los cuales se usó
         email:str = payload.get("sub")
         if email is None: #Si no existe correo se lanza error
             return False
-        return email
+        #return email
+        
     except:
         return False
+    for scope in security_scopes.scopes:
+        if scope not in 
+    
