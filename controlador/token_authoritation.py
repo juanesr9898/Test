@@ -24,12 +24,12 @@ def create_access_token(data:dict,db:Session=Depends(get_db)): #Creamos el token
     db.refresh(new_access_token)
     return encoded_jwt
 
-def verify_token(token : str, credentials_exception): #Verificamos el token y manejamos raise para errores
+def verify_token(token : str): #Verificamos el token y manejamos raise para errores
     try: 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]) #Cargamos  el token descodificado con los algoritmos con los cuales se usó
         email:str = payload.get("sub")
         if email is None: #Si no existe correo se lanza error
-            raise credentials_exception
+            return False
         return email
     except:
-        raise credentials_exception
+        return False

@@ -1,20 +1,38 @@
-from logging import raiseExceptions
 from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
-from sqlalchemy import engine
 from vista.authoritation import router_auth
 import modelo.tokens_model as tkm
-from modelo.database import engine, get_db
+from modelo.database import engine
+from fastapi_utils.session import FastAPISessionMaker
+from sqlalchemy.orm import Session
+from controlador.token_authoritation import verify_token
+
+
+database_uri = f"sqlite:///./base.db"
+sessionmaker = FastAPISessionMaker(database_uri)
+
 
 app = FastAPI()
 
+def remove_expired_tokens(db: Session) -> None:
+    print("---------------------------------------")
+    tokens = db.query(tkm.Token).all()
+    for token in tokens:
+        response = verify_token(token.token) #Verifico si el token esta activo o no
+        if not response: #Si el token no esta activo es decir si ha expirado
+            # Eliminar el token
+            token_to_delete = db.query(tkm.Token).filter(tkm.Token.id == token.id) #Cojo el token que cumpla con la regla de filtrado
+            if token_to_delete.first(): #Verifico que el token si exista
+                token_to_delete.delete(synchronize_session=False)  #Elimina el token
+                db.commit()
+                print("Eliminado el token")
+
 @app.on_event("startup")
 @repeat_every(seconds=5, raise_exceptions=True)  # cada minuto
-def remove_expired_tokens_task(db:router_auth.Session=router_auth.Depends(get_db)) -> None:
-    tokens = db.query(tkm.Token).all()
-    print(tokens)
-    print("\n\n")
-    print("H")
+def remove_expired_tokens_task() -> None:
+    with sessionmaker.context_session() as db:
+        remove_expired_tokens(db=db)
+
     
 
 tkm.Base.metadata.create_all(engine)

@@ -5,6 +5,7 @@ from modelo.tokens_model import Token
 from sqlalchemy.orm import Session
 import modelo.database as database
 
+
 get_db = database.get_db
 
 router_auth = APIRouter(
