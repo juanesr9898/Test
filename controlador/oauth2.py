@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 import controlador.token_authoritation as tk_auth
-from modelo.schemas.User import User
+from modelo.schemas.User import UserSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token/login")
 
@@ -15,13 +15,13 @@ def get_current_user(security_scopes:SecurityScopes, token:str=Depends(oauth2_sc
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": authenticate_value},
     )
-    response = tk_auth.verify_token(token)
+    response = tk_auth.verify_token(token,security_scopes,security_scopes)
     if not response:
         raise credentials_exception
     return response
 
-def get_scope_admin(current_user:User=Security(get_current_user, scopes=["admin"])):
+def get_scope_admin(current_user:UserSchema=Security(get_current_user, scopes=["admin"])):
     return current_user
 
-def get_scope_user(current_user:User=Security(get_current_user, scopes=["user"])):
+def get_scope_user_admin(current_user:UserSchema=Security(get_current_user, scopes=["user","admin"])):
     return current_user
