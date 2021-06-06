@@ -13,11 +13,8 @@ router_auth = APIRouter(
 
 @router_auth.get("/")
 def get_token(db:Session=Depends(get_db)): #Obtenemos el token 
-    access_token = ta.create_access_token(data={"sub":"juan@gmail.com"}) #Desde el controlador se hace el llamado para crear el token
-    new_access_token = Token(token = access_token, expire = 5)
-    db.add(new_access_token)
-    db.commit()
-    db.refresh(new_access_token)
+    data = {"sub":"juan@gmail.com"}
+    access_token = ta.create_access_token(data=data,db=db) #Desde el controlador se hace el llamado para crear el token
     return {
         "access_token":access_token,
         "token_type":"bearer"
