@@ -10,10 +10,8 @@ from fastapi_utils.session import FastAPISessionMaker
 from sqlalchemy.orm import Session
 from controlador.token_authoritation import verify_token_delete
 
-
 database_uri = f"sqlite:///./base.db"
 sessionmaker = FastAPISessionMaker(database_uri)
-
 
 app = FastAPI()
 
@@ -29,13 +27,13 @@ def remove_expired_tokens(db: Session) -> None:
                 token_to_delete.delete(synchronize_session=False)  #Elimina el token
                 db.commit()
                 print("Eliminado el token")
+    
 
 @app.on_event("startup")
 @repeat_every(seconds=60, raise_exceptions=True)  # cada minuto
 def remove_expired_tokens_task() -> None:
     with sessionmaker.context_session() as db:
         remove_expired_tokens(db=db)
-
     
 tkm.Base.metadata.create_all(engine)
 car.Base.metadata.create_all(engine)
