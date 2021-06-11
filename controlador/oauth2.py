@@ -1,6 +1,10 @@
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
+
+#Controlador
 import controlador.token_authoritation as tk_auth
+
+#Model
 from modelo.schemas.User import UserSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token/login")

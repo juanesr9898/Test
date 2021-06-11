@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from modelo.database import Base
-from sqlalchemy.orm import relationship, Session
 
 class Token(Base):
     __tablename__ = 'tokens'
     id = Column(Integer, primary_key=True, index=True)
+    sub = Column(String)
     token = Column(String)
-    expire = Column(Integer)
+    creation = Column(DateTime)
+    expire = Column(DateTime)
     

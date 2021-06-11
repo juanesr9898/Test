@@ -1,9 +1,10 @@
-from fastapi import Depends,status,HTTPException
+from fastapi import Depends
 from sqlalchemy.orm import Session
-import modelo.database as database
-from modelo.cars import Car
 from datetime import datetime
 
+#Models
+import modelo.database as database
+from modelo.cars import Car
 
 get_db = database.get_db
 

@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String
 from modelo.database import Base
-from sqlalchemy.orm import relationship, Session
 
 class User(Base):
     __tablename__ = 'users'

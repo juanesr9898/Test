@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import modelo.database as database
 
 # Controlador
 import controlador.car as car_controller
 import controlador.oauth2 as oauth2
 
 # Models
+import modelo.database as database
 from modelo.schemas.Car import CarSchema
-from modelo.cars import Car
 from modelo.schemas.User import UserSchema
 
 # Oauth2
